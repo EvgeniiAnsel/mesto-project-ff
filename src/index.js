@@ -1,5 +1,5 @@
 // Импортируем необходимые стили и компоненты
-import './pages/index.css'; 
+import './pages/index.css';
 import { initialCards } from './components/cards.js'; // Исходные карточки
 import { createCard, openImagePopup } from './components/card.js'; // Функции для работы с карточками
 import { openPopup, closePopup, closePopupOnOverlayClick } from './components/modal.js'; // Функции для работы с попапами
@@ -10,7 +10,6 @@ import avatar from './images/avatar.jpg'; // Аватар через Webpack
 document.querySelector('.logo').src = logo;
 
 // === Инициализация DOM-элементов ===
-// Переменные для кнопок и попапов
 const profileEditButton = document.querySelector('.profile__edit-button');
 const profileAddButton = document.querySelector('.profile__add-button');
 const popupEditProfile = document.querySelector('.popup_type_edit');
@@ -37,25 +36,25 @@ const profile = {
 
 // === Функции ===
 
-// Функция обновления информации профиля на странице
+// Обновление информации профиля
 function updateProfileInfo() {
   document.querySelector('.profile__title').textContent = profile.name; // Обновление имени
   document.querySelector('.profile__description').textContent = profile.description; // Обновление описания
 }
 
-// Функция для добавления карточки в DOM
+// Добавление карточки в DOM
 function addPlaceCard(item) {
-  // Создаём карточку и передаем функцию для обработки лайка и удаления
-  const cardElement = createCard(item, {
-    handleDelete: (card) => card.remove(), // Удаление карточки
-    handleLike: (button) => button.classList.toggle('card__like-button_is-active'), // Лайк карточки
-  });
+  const cardElement = createCard(item, { 
+    handleDelete: (card) => card.remove(), 
+    handleLike: (button) => button.classList.toggle('card__like-button_is-active'),
+    handleImageClick: openImagePopup // Передаём функцию обработки клика по изображению
+  }); 
   placesList.prepend(cardElement); // Добавляем карточку в начало списка
 }
 
 // === Обработчики событий ===
 
-// Обработчик для закрытия попапов при клике на крестик
+// Закрытие попапов при клике на крестик
 popupCloseButtons.forEach((button) => {
   button.addEventListener('click', () => {
     const popup = button.closest('.popup'); // Находим ближайший попап
@@ -65,57 +64,46 @@ popupCloseButtons.forEach((button) => {
 
 // Открытие попапа редактирования профиля
 profileEditButton.addEventListener('click', () => {
-  // Заполняем форму значениями профиля
-  profileNameInput.value = profile.name;
-  profileDescriptionInput.value = profile.description;
+  profileNameInput.value = profile.name; // Заполняем поле имени
+  profileDescriptionInput.value = profile.description; // Заполняем поле описания
   openPopup(popupEditProfile); // Открываем попап
 });
 
 // Обработчик отправки формы редактирования профиля
-function handleFormSubmit(evt) {
-  evt.preventDefault(); // Отменяем стандартное поведение формы
+profileForm.addEventListener('submit', (evt) => {
+  evt.preventDefault(); // Отменяем стандартное поведение
 
-  // Получаем новые значения из полей ввода
-  const newName = profileNameInput.value;
-  const newDescription = profileDescriptionInput.value;
+  profile.name = profileNameInput.value; // Обновляем имя
+  profile.description = profileDescriptionInput.value; // Обновляем описание
+  updateProfileInfo(); // Обновляем информацию на странице
+  closePopup(popupEditProfile); // Закрываем попап
+});
 
-  // Обновляем информацию профиля на странице
-  document.querySelector('.profile__title').textContent = newName;
-  document.querySelector('.profile__description').textContent = newDescription;
-
-  closePopup(popupEditProfile); // Закрываем попап после изменения
-}
-
-// Прикрепляем обработчик отправки формы
-profileForm.addEventListener('submit', handleFormSubmit);
-
-// Открытие попапа для добавления новой карточки
+// Открытие попапа добавления карточки
 profileAddButton.addEventListener('click', () => openPopup(popupNewCard));
 
-// Обработчик отправки формы добавления новой карточки
-newCardForm.addEventListener('submit', (event) => {
-  event.preventDefault(); // Отменяем стандартное поведение формы
+// Обработчик добавления новой карточки
+newCardForm.addEventListener('submit', (evt) => {
+  evt.preventDefault(); // Отменяем стандартное поведение
 
-  // Получаем значения с полей ввода карточки
   const placeName = newCardForm.querySelector('input[name="place-name"]').value;
   const placeLink = newCardForm.querySelector('input[name="link"]').value;
 
-  // Проверяем, что введены значения
   if (placeName && placeLink) {
-    addPlaceCard({ name: placeName, link: placeLink }); // Добавляем новую карточку
+    addPlaceCard({ name: placeName, link: placeLink }); // Добавляем карточку
   }
 
-  closePopup(popupNewCard); // Закрываем попап после добавления
-  newCardForm.reset(); // Очищаем форму
+  closePopup(popupNewCard); // Закрываем попап
+  newCardForm.reset(); // Сбрасываем форму
 });
 
 // === Инициализация ===
 
-// Инициализация профиля на странице
+// Устанавливаем начальную информацию профиля
 updateProfileInfo();
 
-// Закрытие попапов при клике на оверлей
-closePopupOnOverlayClick();
+// Устанавливаем слушатель для закрытия попапов при клике на оверлей
+document.addEventListener('click', closePopupOnOverlayClick);
 
-// Добавление начальных карточек на страницу
+// Добавляем начальные карточки
 initialCards.forEach(addPlaceCard);

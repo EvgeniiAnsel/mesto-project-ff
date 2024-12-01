@@ -38,16 +38,3 @@ export function handleLike(button) {
 export function handleDelete(card) {
   card.remove(); // Удаляем карточку
 }
-
-// Открытие попапа с изображением
-export function openImagePopup(item) {
-  const popupImage = document.querySelector('.popup_type_image'); // Находим попап изображения
-  const popupImageImg = popupImage.querySelector('.popup__image'); // Изображение внутри попапа
-  const popupCaption = popupImage.querySelector('.popup__caption'); // Подпись к изображению
-
-  popupImageImg.src = item.link; // Устанавливаем ссылку на изображение
-  popupImageImg.alt = item.name; // Устанавливаем описание изображения
-  popupCaption.textContent = item.name; // Устанавливаем название для подписи
-
-  openPopup(popupImage); // Открываем попап с изображением
-}

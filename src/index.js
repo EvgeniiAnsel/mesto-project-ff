@@ -1,7 +1,7 @@
 // Импортируем необходимые стили и компоненты
 import './pages/index.css';
 import { initialCards } from './components/cards.js'; // Исходные карточки
-import { createCard, openImagePopup } from './components/card.js'; // Функции для работы с карточками
+import { createCard, handleLike, handleDelete } from './components/card.js'; // Функции для работы с карточками
 import { openPopup, closePopup, closePopupOnOverlayClick } from './components/modal.js'; // Функции для работы с попапами
 import logo from './images/logo.svg'; // Логотип через Webpack
 import avatar from './images/avatar.jpg'; // Аватар через Webpack
@@ -45,9 +45,19 @@ function updateProfileInfo() {
 // Добавление карточки в DOM
 function addPlaceCard(item) {
   const cardElement = createCard(item, { 
-    handleDelete: (card) => card.remove(), 
-    handleLike: (button) => button.classList.toggle('card__like-button_is-active'),
-    handleImageClick: openImagePopup // Передаём функцию обработки клика по изображению
+    handleDelete, // Используем импортированный метод для удаления
+    handleLike, // Используем импортированный метод для лайка
+    handleImageClick: (item) => { // Передаём функцию обработки клика по изображению
+      const popupImage = document.querySelector('.popup_type_image'); // Попап изображения
+      const popupImageImg = popupImage.querySelector('.popup__image'); // Изображение внутри попапа
+      const popupCaption = popupImage.querySelector('.popup__caption'); // Подпись к изображению
+
+      popupImageImg.src = item.link; // Устанавливаем ссылку на изображение
+      popupImageImg.alt = item.name; // Устанавливаем описание изображения
+      popupCaption.textContent = item.name; // Устанавливаем название для подписи
+
+      openPopup(popupImage); // Открываем попап с изображением
+    },
   }); 
   placesList.prepend(cardElement); // Добавляем карточку в начало списка
 }

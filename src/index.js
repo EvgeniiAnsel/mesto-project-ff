@@ -1,3 +1,5 @@
+// index.js
+
 // Импортируем необходимые стили и компоненты
 import './pages/index.css';
 import { initialCards } from './components/cards.js'; // Исходные карточки
@@ -5,6 +7,7 @@ import { createCard, handleLike, handleDelete } from './components/card.js'; // 
 import { openPopup, closePopup, closePopupOnOverlayClick } from './components/modal.js'; // Функции для работы с попапами
 import logo from './images/logo.svg'; // Логотип через Webpack
 import avatar from './images/avatar.jpg'; // Аватар через Webpack
+import { enableValidation, clearValidation } from './components/validation.js'; // Функции для валидации
 
 // Устанавливаем логотип на страницу
 document.querySelector('.logo').src = logo;
@@ -44,7 +47,7 @@ function updateProfileInfo() {
 
 // Добавление карточки в DOM
 function addPlaceCard(item) {
-  const cardElement = createCard(item, { 
+  const cardElement = createCard(item, {
     handleDelete, // Используем импортированный метод для удаления
     handleLike, // Используем импортированный метод для лайка
     handleImageClick: (item) => { // Передаём функцию обработки клика по изображению
@@ -58,7 +61,7 @@ function addPlaceCard(item) {
 
       openPopup(popupImage); // Открываем попап с изображением
     },
-  }); 
+  });
   placesList.prepend(cardElement); // Добавляем карточку в начало списка
 }
 
@@ -76,6 +79,7 @@ popupCloseButtons.forEach((button) => {
 profileEditButton.addEventListener('click', () => {
   profileNameInput.value = profile.name; // Заполняем поле имени
   profileDescriptionInput.value = profile.description; // Заполняем поле описания
+  clearValidation(profileForm, validationConfig); // Очищаем ошибки валидации
   openPopup(popupEditProfile); // Открываем попап
 });
 
@@ -105,6 +109,7 @@ newCardForm.addEventListener('submit', (evt) => {
 
   closePopup(popupNewCard); // Закрываем попап
   newCardForm.reset(); // Сбрасываем форму
+  clearValidation(newCardForm, validationConfig); // Очищаем ошибки валидации
 });
 
 // === Инициализация ===
@@ -117,3 +122,15 @@ document.addEventListener('click', closePopupOnOverlayClick);
 
 // Добавляем начальные карточки
 initialCards.forEach(addPlaceCard);
+
+// Включаем валидацию
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
+
+enableValidation(validationConfig);

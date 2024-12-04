@@ -6,14 +6,44 @@ const config = {
   },
 };
 
-const getAllCards = async () => {
-  try {
-    const request = await fetch(`${config.baseUrl}/cards`, {
-      headers: config.headers,
-    });
-    return handleRequest(request);
-  } catch (err) {
-  console.error("Ошибка при запросе:", err);
-    throw err;
-  }
-};
+const getAllCards = () => {
+  return fetch(`${config.baseUrl}/cards`,
+  {headers: config.headers})
+
+  .then ((res) => {
+    if(!res.ok){
+      return Promise.reject(`Ошибка ${res.status}`);
+    }
+    
+    return(res.json())
+  })
+
+  .then ((dataCard) => {
+
+    return(dataCard);
+  })
+}
+
+const getUserProfile = () => {
+  return fetch(`${config.baseUrl}/users/me`,
+  {headers: config.headers})
+
+  .then ((res) => {
+    if(!res.ok){
+      return Promise.reject(`Ошибка ${res.status}`);
+    }
+      
+    return(res.json())
+  })
+
+  .then ((myProfile) => {
+
+    return(myProfile);
+  })
+
+}
+
+
+
+
+export { getAllCards, getUserProfile }

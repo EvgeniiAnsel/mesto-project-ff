@@ -1,11 +1,11 @@
 // Импорт
 import './pages/index.css';
-import { initialCards } from './components/cards.js';
+/*import { initialCards } from './components/cards.js';*/
 import { createCard, handleLike, handleDelete } from './components/card.js';
-import { openPopup, closePopup, closePopupOnOverlayClick } from './components/modal.js';
+import { openPopup, closePopup, closePopupOnOverlayClick, startPopupProgress } from './components/modal.js';
 import logo from './images/logo.svg';
-import avatar from './images/avatar.jpg';
 import { enableValidation, clearValidation } from './components/validation.js';
+import { getAllCards, getUserProfile } from './components/api.js';
 
 // Логотип
 document.querySelector('.logo').src = logo;
@@ -29,39 +29,81 @@ const profileDescriptionInput = popupEditProfile.querySelector('input[name="desc
 const placesList = document.querySelector('.places__list');
 
 // Профиль с данными
-const profile = {
-  name: 'Жак-Ив Кусто',
-  description: 'Исследователь океана',
-  avatar,
-};
+// const profile = {
+//   name: 'Жак-Ив Кусто',
+//   description: 'Исследователь океана',
+//   avatar,
+// };
+
+getAllCards ()
+.then ((data) => {
+console.log(data)
+})
+
+const setProfile = () => {
+  getUserProfile ()
+    .then ((myProfile) => {
+      document.querySelector('.profile__title').textContent = myProfile.name;
+      document.querySelector('.profile__description').textContent = myProfile.about;
+      document.querySelector('.profile__image').style.backgroundImage = `url('${myProfile.avatar}')`
+    })
+}
+
+setProfile();
 
 // Функции
 
 // Обновление информации профиля
-function updateProfileInfo() {
-  document.querySelector('.profile__title').textContent = profile.name;
-  document.querySelector('.profile__description').textContent = profile.description;
-}
+// function updateProfileInfo() {
+//   document.querySelector('.profile__title').textContent = profile.name;
+//   document.querySelector('.profile__description').textContent = profile.description;
+// }
 
 // Добавление карточки в DOM
-function addPlaceCard(item) {
-  const cardElement = createCard(item, {
-    handleDelete,
-    handleLike,
-    handleImageClick: (item) => {
-      const popupImage = document.querySelector('.popup_type_image');
-      const popupImageImg = popupImage.querySelector('.popup__image');
-      const popupCaption = popupImage.querySelector('.popup__caption');
+// function addPlaceCard(item) {
+//   const cardElement = createCard(item, {
+//     handleDelete,
+//     handleLike,
+//     handleImageClick: (item) => {
+//       const popupImage = document.querySelector('.popup_type_image');
+//       const popupImageImg = popupImage.querySelector('.popup__image');
+//       const popupCaption = popupImage.querySelector('.popup__caption');
 
-      popupImageImg.src = item.link;
-      popupImageImg.alt = item.name;
-      popupCaption.textContent = item.name;
+//       popupImageImg.src = item.link;
+//       popupImageImg.alt = item.name;
+//       popupCaption.textContent = item.name;
 
-      openPopup(popupImage);
-    },
-  });
-  placesList.prepend(cardElement);
+//       openPopup(popupImage);
+//     },
+//   });
+//   placesList.prepend(cardElement);
+// }
+
+const cardBuild = () => {
+  getAllCards ()
+  .then ((cardArray) => {
+    cardArray.forEach ((card) => {
+      const cardElement = createCard(card, {
+            handleDelete,
+            handleLike,
+            handleImageClick: (card) => {
+              const popupImage = document.querySelector('.popup_type_image');
+              const popupImageImg = popupImage.querySelector('.popup__image');
+              const popupCaption = popupImage.querySelector('.popup__caption');
+        
+              popupImageImg.src = card.link;
+              popupImageImg.alt = card.name;
+              popupCaption.textContent = card.name;
+        
+              openPopup(popupImage);
+            },
+          });
+          placesList.prepend(cardElement);
+    })
+  })
 }
+
+cardBuild ();
 
 // Обработчики
 
@@ -87,7 +129,7 @@ profileForm.addEventListener('submit', (evt) => {
 
   profile.name = profileNameInput.value;
   profile.description = profileDescriptionInput.value;
-  updateProfileInfo();
+  // updateProfileInfo();
   closePopup(popupEditProfile);
 });
 
@@ -113,13 +155,13 @@ newCardForm.addEventListener('submit', (evt) => {
 // Старт
 
 // начальная информацию профиля
-updateProfileInfo();
+// updateProfileInfo();
 
 // слушатель на оверлей
 document.addEventListener('click', closePopupOnOverlayClick);
 
 // начальные карточки
-initialCards.forEach(addPlaceCard);
+// initialCards.forEach(addPlaceCard);
 
 // валидация
 const validationConfig = {
@@ -132,3 +174,4 @@ const validationConfig = {
 };
 
 enableValidation(validationConfig);
+

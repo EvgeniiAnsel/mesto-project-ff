@@ -1,5 +1,3 @@
-// validation.js
-
 // Показать ошибку ввода
 const showInputError = (formElement, inputElement, errorMessage) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -19,7 +17,6 @@ const hideInputError = (formElement, inputElement) => {
 // Проверка валидности поля
 const isValid = (formElement, inputElement) => {
   if (inputElement.validity.patternMismatch) {
-    // Установка пользовательского сообщения об ошибке из data-error-message
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
     inputElement.setCustomValidity('');
@@ -32,12 +29,12 @@ const isValid = (formElement, inputElement) => {
   }
 };
 
-// Проверка наличия невалидного поля
+// ппроверка наличия невалидного поля
 const hasInvalidInput = (inputList) => {
   return inputList.some((inputElement) => !inputElement.validity.valid);
 };
 
-// Переключение состояния кнопки
+// переключение состояния кнопки
 const toggleButtonState = (inputList, buttonElement) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.classList.add('popup__button_disabled');
@@ -48,12 +45,11 @@ const toggleButtonState = (inputList, buttonElement) => {
   }
 };
 
-// Установка обработчиков событий
+// обработчики событий
 const setEventListeners = (formElement) => {
   const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
   const buttonElement = formElement.querySelector('.popup__button');
 
-  // Первичная проверка состояния кнопки
   toggleButtonState(inputList, buttonElement);
 
   inputList.forEach((inputElement) => {
@@ -64,30 +60,30 @@ const setEventListeners = (formElement) => {
   });
 };
 
-// Включение валидации для всех форм
+// Включение валидации
 export const enableValidation = () => {
   const formList = Array.from(document.querySelectorAll('.popup__form'));
 
   formList.forEach((formElement) => {
     formElement.addEventListener('submit', (evt) => {
-      evt.preventDefault(); // Предотвращаем стандартное поведение формы
+      evt.preventDefault();
     });
 
     setEventListeners(formElement);
   });
 };
 
-// Новая функция для очистки валидации
+// очистка валидации
 export const clearValidation = () => {
   // Очистка всех сообщений об ошибках
   const errorElements = document.querySelectorAll('.form__input-error');
   errorElements.forEach((errorElement) => {
-    errorElement.textContent = '';  // Очищаем текст ошибок
+    errorElement.textContent = '';
   });
 
   // Убираем стили ошибок с полей ввода
   const inputElements = document.querySelectorAll('.popup__input');
   inputElements.forEach((inputElement) => {
-    inputElement.classList.remove('popup__input_type_error');  // Убираем классы ошибок
+    inputElement.classList.remove('popup__input_type_error');
   });
 };

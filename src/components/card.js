@@ -1,40 +1,36 @@
-// Импортируем функцию для открытия попапа из модального модуля
-import { openPopup } from './modal.js';
-
-// Функция для создания карточки
+// создание карточки
 export function createCard(item, { handleDelete, handleLike, handleImageClick }) {
-  const cardTemplate = document.querySelector('#card-template'); // Шаблон карточки
-  const cardFragment = cardTemplate.content.cloneNode(true); // Клонируем содержимое шаблона
-  const cardElement = cardFragment.querySelector('.card'); // Находим корневой элемент карточки
-  const cardImage = cardElement.querySelector('.card__image'); // Изображение карточки
-  const cardTitle = cardElement.querySelector('.card__title'); // Заголовок карточки
-  const cardLikeButton = cardElement.querySelector('.card__like-button'); // Кнопка лайка
-  const cardDeleteButton = cardElement.querySelector('.card__delete-button'); // Кнопка удаления
+  const cardTemplate = document.querySelector('#card-template');
+  const cardFragment = cardTemplate.content.cloneNode(true);
+  const cardElement = cardFragment.querySelector('.card');
+  const cardImage = cardElement.querySelector('.card__image');
+  const cardTitle = cardElement.querySelector('.card__title');
+  const cardLikeButton = cardElement.querySelector('.card__like-button');
+  const cardDeleteButton = cardElement.querySelector('.card__delete-button');
 
-  // Устанавливаем данные для карточки
-  cardImage.src = item.link; // Устанавливаем ссылку на изображение
-  cardImage.alt = item.name; // Устанавливаем описание изображения
-  cardTitle.textContent = item.name; // Устанавливаем название карточки
+  // данные для карточки
+  cardImage.src = item.link;
+  cardImage.alt = item.name;
+  cardTitle.textContent = item.name;
 
-  // Обработчик лайка
+  // лайк
   cardLikeButton.addEventListener('click', () => handleLike(cardLikeButton));
 
-  // Обработчик удаления
+  // удаление
   cardDeleteButton.addEventListener('click', () => handleDelete(cardElement));
 
-  // Обработчик клика по изображению карточки для открытия попапа с изображением
+  // клик по изображению для открытия
   cardImage.addEventListener('click', () => handleImageClick(item));
 
-  // Возвращаем готовую карточку
   return cardElement;
 }
 
-// Функция для обработки лайка
+// обработка лайка
 export function handleLike(button) {
-  button.classList.toggle('card__like-button_is-active'); // Переключаем класс лайка
+  button.classList.toggle('card__like-button_is-active');
 }
 
-// Функция для обработки удаления
+// обработка удаления
 export function handleDelete(card) {
-  card.remove(); // Удаляем карточку
+  card.remove();
 }

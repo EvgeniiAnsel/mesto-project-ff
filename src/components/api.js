@@ -144,7 +144,7 @@ const updateAvatar = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
-    body: JSON.stringify({ avatar }),  // Отправляем новое изображение аватара
+    body: JSON.stringify({ avatar }),  // Отправляю новое изображение аватара
   })
     .then((res) => {
       if (!res.ok) {
@@ -153,6 +153,7 @@ const updateAvatar = (avatar) => {
       return res.json();  // Возвращаем данные профиля после обновления аватара
     });
 };
+
 
 
 export { getAllCards, getUserProfile, updateProfile, handleLike, config, addCard, updateAvatar };

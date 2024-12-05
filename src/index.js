@@ -6,6 +6,7 @@ import { openPopup, closePopup, closePopupOnOverlayClick } from './components/mo
 import logo from './images/logo.svg';
 import { enableValidation, clearValidation } from './components/validation.js';
 import { getAllCards, getUserProfile, updateProfile, addCard } from './components/api.js';
+import { updateAvatar } from './components/api.js';
 
 // Логотип
 document.querySelector('.logo').src = logo;
@@ -28,6 +29,15 @@ const profileDescriptionInput = popupEditProfile.querySelector('input[name="desc
 // Список мест для отображения карточек
 const placesList = document.querySelector('.places__list');
 
+// смена аватара
+
+const profileAvatar = document.querySelector('.profile__image');
+const popupNewAvatar = document.querySelector('.popup_type_new-avatar');
+
+const newAvatarForm = popupNewAvatar.querySelector('.popup__form');
+const avatarInput = newAvatarForm.querySelector('input[name="avatar-link"]');
+
+
 getAllCards()
   .then((data) => {
     console.log(data);
@@ -43,6 +53,20 @@ const setProfile = () => {
 };
 
 setProfile();
+
+// Инициализация ID текущего пользователя
+let currentUserId = '';
+
+getUserProfile()
+  .then((myProfile) => {
+    currentUserId = myProfile._id; // сохраняю свой ID текущего пользователя
+    setProfile(); // Обновление профиля
+    cardBuild(); // Построение карточек
+  })
+  .catch((error) => {
+    console.error('Ошибка при получении данных пользователя', error);
+  });
+
 
 const cardBuild = () => {
   getAllCards()
@@ -62,11 +86,12 @@ const cardBuild = () => {
 
             openPopup(popupImage);
           },
+          currentUserId, // передаем ID текущего пользователя
         });
 
-        // Добавляем data-id для поиска элемента по ID
+        // Добавляю data-id для поиска элемента по ID
         cardElement.setAttribute('data-id', card._id);
-        placesList.prepend(cardElement);  // Добавляем карточку в список
+        placesList.prepend(cardElement);  // Добавляю карточку в список
       });
     })
     .catch((error) => {
@@ -87,30 +112,12 @@ popupCloseButtons.forEach((button) => {
   });
 });
 
-// // Открытие попапа редактирования профиля
-// profileEditButton.addEventListener('click', () => {
-//   profileNameInput.value = profile.name;
-//   profileDescriptionInput.value = profile.description;
-//   clearValidation(profileForm, validationConfig);
-//   openPopup(popupEditProfile);
-// });
-
-// // Обработчик отправки формы редактирования профиля
-// profileForm.addEventListener('submit', (evt) => {
-//   evt.preventDefault();
-
-//   profile.name = profileNameInput.value;
-//   profile.description = profileDescriptionInput.value;
-//   // updateProfileInfo();
-//   closePopup(popupEditProfile);
-// });
-
 // Открытие попапа добавления карточки
 profileAddButton.addEventListener('click', () => openPopup(popupNewCard));
 
 const loaderText = "Сохранение...";
 
-// Функция для изменения состояния кнопки
+// изменение состояния кнопки
 function loadingButton(button, isLoading, initialText) {
   if (isLoading) {
     button.textContent = loaderText;
@@ -121,8 +128,8 @@ function loadingButton(button, isLoading, initialText) {
   }
 }
 
-// Обработчик добавления новой карточки
-// Обработчик добавления новой карточки
+
+// добавление новой карточки
 newCardForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
 
@@ -135,10 +142,10 @@ newCardForm.addEventListener('submit', (evt) => {
   const placeLink = newCardForm.querySelector('input[name="link"]').value;
 
   if (placeName && placeLink) {
-    // Отправляем данные на сервер для добавления карточки
+    // Отправляю данные на сервер для добавления карточки
     addCard(placeName, placeLink)
       .then((newCardData) => {
-        // Создаем карточку с данными, полученными от сервера
+        // создаю карточку с данными, полученными от сервера
         const newCard = createCard(newCardData, {
           handleDelete,
           handleLike,
@@ -155,7 +162,7 @@ newCardForm.addEventListener('submit', (evt) => {
           },
         });
 
-        // Добавляем новую карточку в DOM
+        // Добавление новую карточку в DOM
         placesList.prepend(newCard);
         
         // Закрытие попапа и очистка формы
@@ -172,14 +179,6 @@ newCardForm.addEventListener('submit', (evt) => {
 
 
 // смена аватара
-// Сменить аватар
-import { updateAvatar } from './components/api.js';
-
-const profileAvatar = document.querySelector('.profile__image');
-const popupNewAvatar = document.querySelector('.popup_type_new-avatar');
-
-const newAvatarForm = popupNewAvatar.querySelector('.popup__form');
-const avatarInput = newAvatarForm.querySelector('input[name="avatar-link"]');
 
 profileAvatar.addEventListener('click', () => {
   openPopup(popupNewAvatar);
@@ -192,25 +191,22 @@ newAvatarForm.addEventListener('submit', (evt) => {
   const submitButton = evt.target.querySelector(validationConfig.submitButtonSelector);
   const initialText = submitButton.textContent;
 
-  // Изменяем текст и состояние кнопки на "Сохранение..."
+  // состояние кнопки "Сохранение..."
   loadingButton(submitButton, true, initialText);
 
   if (avatarLink) {
     updateAvatar(avatarLink) // Отправка на сервер для обновления аватара
       .then(() => {
-        // После успешного обновления аватара на сервере, обновляем аватар в DOM
+        // После успешного обновления аватара на сервере, обновляет аватар в DOM
         document.querySelector('.profile__image').style.backgroundImage = `url(${avatarLink})`;
 
-        // Закрытие попапа и очистка формы
         closePopup(popupNewAvatar);
         newAvatarForm.reset();
 
-        // Восстановление первоначального текста и состояния кнопки
         loadingButton(submitButton, false, initialText);
       })
       .catch((error) => {
         console.error('Ошибка при обновлении аватара', error);
-        // В случае ошибки восстанавливаем кнопку
         loadingButton(submitButton, false, initialText);
       });
   }
@@ -252,7 +248,7 @@ profileForm.addEventListener('submit', (evt) => {
   updateProfile(name, description)
     .then((updatedProfile) => {
       setProfile(); // Вызов для обновления интерфейса
-      closePopup(popupEditProfile);  // Закрытие попапа после успешного обновления
+      closePopup(popupEditProfile);  // Закрытие попапа после обновления
     })
     .catch((error) => {
       console.error('Ошибка при обновлении профиля', error);

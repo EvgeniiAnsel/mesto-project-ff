@@ -36,7 +36,8 @@ export function createCard(item, { handleDelete, handleLike, handleImageClick, c
 
   // Удаление
   if (item.owner._id === currentUserId) {
-    cardDeleteButton.addEventListener('click', () => handleDelete(cardElement, item)); // показать кнопку удаления только если это моя карточка
+    cardDeleteButton.style.display = 'block'; // показываем кнопку удаления только если это моя карточка
+    cardDeleteButton.addEventListener('click', () => handleDelete(cardElement, item)); // обработчик удаления
   } else {
     cardDeleteButton.style.display = 'none'; // скрыть кнопку удаления для карточек других пользователей
   }
@@ -49,6 +50,8 @@ export function createCard(item, { handleDelete, handleLike, handleImageClick, c
 
   return cardElement;
 }
+
+
 
 
 // обработка лайка
@@ -85,6 +88,7 @@ export function handleLike(button, item) {
 
 
 // обработка удаления
+// обработка удаления
 export function handleDelete(cardElement, item) {
   const cardId = item._id; // Получаем ID карточки
 
@@ -99,7 +103,7 @@ export function handleDelete(cardElement, item) {
     if (!res.ok) {
       return Promise.reject(`Ошибка ${res.status}`);
     }
-    cardElement.remove();
+    cardElement.remove();  // Убираем карточку из DOM сразу
   })
   .catch((error) => {
     console.error('Ошибка при удалении карточки', error);

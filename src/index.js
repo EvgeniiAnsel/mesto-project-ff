@@ -68,36 +68,40 @@ getUserProfile()
   });
 
 
-const cardBuild = () => {
-  getAllCards()
-    .then((cardArray) => {
-      cardArray.forEach((card) => {
-        const cardElement = createCard(card, {
-          handleDelete,
-          handleLike,
-          handleImageClick: (card) => {
-            const popupImage = document.querySelector('.popup_type_image');
-            const popupImageImg = popupImage.querySelector('.popup__image');
-            const popupCaption = popupImage.querySelector('.popup__caption');
-
-            popupImageImg.src = card.link;
-            popupImageImg.alt = card.name;
-            popupCaption.textContent = card.name;
-
-            openPopup(popupImage);
-          },
-          currentUserId, // передаем ID текущего пользователя
+  const cardBuild = () => {
+    getAllCards()
+      .then((cardArray) => {
+        // Очищаем все карточки перед тем, как отрендерить новые
+        placesList.innerHTML = ''; 
+  
+        cardArray.forEach((card) => {
+          const cardElement = createCard(card, {
+            handleDelete,
+            handleLike,
+            handleImageClick: (card) => {
+              const popupImage = document.querySelector('.popup_type_image');
+              const popupImageImg = popupImage.querySelector('.popup__image');
+              const popupCaption = popupImage.querySelector('.popup__caption');
+  
+              popupImageImg.src = card.link;
+              popupImageImg.alt = card.name;
+              popupCaption.textContent = card.name;
+  
+              openPopup(popupImage);
+            },
+            currentUserId, // передаем ID текущего пользователя
+          });
+  
+          // Добавляю data-id для поиска элемента по ID
+          cardElement.setAttribute('data-id', card._id);
+          placesList.prepend(cardElement);  // Добавляю карточку в список
         });
-
-        // Добавляю data-id для поиска элемента по ID
-        cardElement.setAttribute('data-id', card._id);
-        placesList.prepend(cardElement);  // Добавляю карточку в список
+      })
+      .catch((error) => {
+        console.error('Ошибка при загрузке карточек', error);
       });
-    })
-    .catch((error) => {
-      console.error('Ошибка при загрузке карточек', error);
-    });
-};
+  };
+  
 
 cardBuild();
 
@@ -160,9 +164,10 @@ newCardForm.addEventListener('submit', (evt) => {
 
             openPopup(popupImage);
           },
+          currentUserId, // передаем ID текущего пользователя
         });
 
-        // Добавление новую карточку в DOM
+        // Добавление новой карточки в DOM
         placesList.prepend(newCard);
         
         // Закрытие попапа и очистка формы
@@ -176,6 +181,7 @@ newCardForm.addEventListener('submit', (evt) => {
       });
   }
 });
+
 
 
 // смена аватара

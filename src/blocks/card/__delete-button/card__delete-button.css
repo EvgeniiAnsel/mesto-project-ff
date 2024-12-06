@@ -25,3 +25,7 @@
 .card__delete-button-is-active {
   visibility: visible;
 }
+
+.card__delete-button_hidden {
+  display: none;
+}

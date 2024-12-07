@@ -75,17 +75,3 @@ export function createCard(item, { handleImageClick, currentUserId }) {
   return cardElement;
 }
 
-export function setButtonState(button, { isLoading, initialText, loadingText }) {
-  if (!button) {
-    console.error("Ошибка: передана некорректная кнопка.");
-    return;
-  }
-
-  if (isLoading) {
-    button.textContent = loadingText || 'Загрузка...';
-    button.disabled = true; // Блок кнопки
-  } else {
-    button.textContent = initialText; // исходный текст
-    button.disabled = false; // Разблокировка кнопки
-  }
-}

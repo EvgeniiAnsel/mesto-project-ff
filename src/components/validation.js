@@ -34,16 +34,10 @@ const hasInvalidInput = (inputList) => {
   return inputList.some((inputElement) => !inputElement.validity.valid);
 };
 
-// Проверка наличия пустых полей
-const hasEmptyInput = (inputList) => {
-  return inputList.some((inputElement) => inputElement.value.trim() === '');
-};
-
 // Переключение состояния кнопки
 export const toggleButtonState = (inputList, buttonElement, settings) => {
-  if (hasInvalidInput(inputList) || hasEmptyInput(inputList)) {
-    buttonElement.classList.add(settings.inactiveButtonClass);
-    buttonElement.disabled = true;
+  if (hasInvalidInput(inputList)) {
+    turnOffbutton (buttonElement, settings);
   } else {
     buttonElement.classList.remove(settings.inactiveButtonClass);
     buttonElement.disabled = false;
@@ -75,20 +69,19 @@ export const enableValidation = (settings) => {
   });
 };
 
+const turnOffbutton = (button, config) => {
+  button.classList.add(config.inactiveButtonClass);
+  button.disabled = true;
+}
+
 // Очистка валидации
 export const clearValidation = (formElement, settings) => {
+
   const inputElements = formElement.querySelectorAll(settings.inputSelector);
+  const buttonElement = formElement.querySelector (settings.submitButtonSelector);
+
   inputElements.forEach((inputElement) => {
     hideInputError(formElement, inputElement, settings);
+    turnOffbutton (buttonElement, settings);
   });
-};
-
-// validation.js
-export const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
 };

@@ -34,14 +34,3 @@ export function initPopupAnimations() {
     }
   });
 }
-
-// Старт прогресса в попапе
-export function startPopupProgress(popupElement) {
-  const submitButton = popupElement.querySelector(".popup__button");
-  const initialText = submitButton.textContent;
-  submitButton.textContent = "Сохранение...";
-
-  return () => {
-    submitButton.textContent = initialText;
-  };
-}
